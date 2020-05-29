@@ -1878,135 +1878,6 @@ on *:sockread:Zodbot: {
 
       privmsg $gettok(%Zodbot.data,3,32) 성별 : $3 / 출신지 : $4 / 생년월일 : %chn_re1 $+ %chn_re2 $+ %chn_re3 $+ %chn_re4 $+ 년 %chn_re5 $+ %chn_re6 $+ 월 %chn_re7 $+ %chn_re8 $+ 일 생 / 등록순번 : %chn_re9 $+ %chn_re10 $+ %chn_re11 / 거민신분증번호 : %result
     }
-    if ($1 == $readini(prefix.ini,%chan,p1) $+ 마스터 || $1 == $readini(prefix.ini,%chan,p2) $+ 마스터 || $1 == $readini(prefix.ini,%chan,p3) $+ 마스터) {
-      if (!$readini(tstatus.ini,$address(%nick,2),캐릭터)) { privmsg $gettok(%Zodbot.data,3,32) 조교 데이터를 읽을 수 없습니다. | halt }
-      var %s.target $address(%nick,2)
-      var %tt.master $nickdt(%nick)
-      if (%nick == $me && $2) { var %s.target *!*@ $+ $2 | var %tt.master $2 }
-      var %i 1
-      var %t.cnt -1
-      while (%i <= $ini(tstatus.ini,%s.target,0)) {
-        if ($readini(tstatus.ini,%s.target,$ini(tstatus.ini,%s.target,%i)) >= 10000 || ( $readini(teach.ini,maxlv,$remove($ini(tstatus.ini,%s.target,%i),레이무_,소악마_,치르노_)) == 2 && $readini(tstatus.ini,%s.target,$ini(tstatus.ini,%s.target,%i)) >= 2000)) {
-          inc %t.cnt
-          if (%t.cnt isnum 0-30) { var %t.master %t.master $+ $chr(44) $ini(tstatus.ini,%s.target,%i) }
-          else if (%t.cnt isnum 30-60) { var %t.master2 %t.master2 $+ $chr(44) $ini(tstatus.ini,%s.target,%i) }          
-        }
-        inc %i
-      }
-      var %master $readini(tmaster.ini,칭호,%t.cnt)
-      var %t.master $replace($remove($mid(%t.master,3),$chr(32) $+ 캐릭터 $+ $chr(44)),치르노_,(치),레이무_,(레),소악마_,(소))
-      var %t.master $remove(%t.master,캐릭터,$chr(44))
-      var %t.master2 $replace($remove($mid(%t.master2,3),$chr(32) $+ 캐릭터 $+ $chr(44)),치르노_,(치),레이무_,(레),소악마_,(소))
-      var %t.master2 $remove(%t.master2,캐릭터,$chr(44))
-      if (!%t.master) { var %t.master 없음 }
-      privmsg $gettok(%Zodbot.data,3,32) %tt.master $+ 님의 현재 칭호는 %master $+ 이며 총 %t.cnt $+ 개의 마스터 입니다.
-      privmsg $gettok(%Zodbot.data,3,32) 조교완료 : %t.master
-      if (%t.master2) { privmsg $gettok(%Zodbot.data,3,32) %t.master2 }
-
-    }
-    if ($1 == $readini(prefix.ini,%chan,p1) $+ 조교 || $1 == $readini(prefix.ini,%chan,p2) $+ 조교 || $1 == $readini(prefix.ini,%chan,p3) $+ 조교) {
-      ; if (%nick != $me) { privmsg $gettok(%Zodbot.data,3,32) 다른 명령어의 버그 수정 작업을 위해 잠시 명령어 실행을 정지합니다. | halt }
-      if (!$ini(tstatus.ini,$address(%nick,2))) {
-        if (%chan == #마왕부활단) { }
-        else {
-          privmsg $gettok(%Zodbot.data,3,32) [4!1] 뒤지게 쳐맞기전에 가서 동네 문방구 뽑기하는 초딩들 삥이 뜯고 까까나 사먹어라. 애들은 실행 안해준다. 'ㅅ'ㅗ | set %usagelimit 1 | halt
-        }
-      }
-      if (!$2) {
-        privmsg $gettok(%Zodbot.data,3,32) Usage : $readini(cmdlimit.ini,조교,설명)
-        privmsg $gettok(%Zodbot.data,3,32) $readini(cmdlimit.ini,조교,설명1)
-        halt
-      }
-      if (!$readini(teach.ini,maxlv,$2)) {
-        privmsg $gettok(%Zodbot.data,3,32) 할 수 없는 행동이거나 지원되는 행동이 아닙니다. Usage : $readini(cmdlimit.ini,조교,설명)
-        privmsg $gettok(%Zodbot.data,3,32) $readini(cmdlimit.ini,조교,설명1)
-        halt
-      }
-      if ($2 == 캐릭터) {
-        if (!$readini(teach.ini,캐릭터,$3)) {
-          var %i 1
-          while (%i <= $ini(teach.ini,캐릭터,0)) {
-            var %s.char %s.char $+ $chr(44) $ini(teach.ini,캐릭터,%i)
-            inc %i
-          }      
-          privmsg $gettok(%Zodbot.data,3,32) 입력하신 캐릭터는 지원되지 않거나 존재하지 않는 캐릭터 입니다. Usage : @조교 캐릭터 캐릭터명 (ex : @조교 캐릭터 $uiif(치르노,소악마,레이무) $+ )
-          privmsg $gettok(%Zodbot.data,3,32) 현재 조교 가능한 캐릭터 : $mid(%s.char,3)        
-          halt
-        }
-        writeini -n tstatus.ini $address(%nick,2) 캐릭터 $3      
-        privmsg $gettok(%Zodbot.data,3,32) $3 $+ (으)로 조교가 가능하도록 설정되었습니다.
-        halt            
-      }
-      var %character t $+ $readini(tstatus.ini,$address(%nick,2),캐릭터) $+ .ini
-      if (!$readini(tstatus.ini,$address(%nick,2),캐릭터)) {
-        var %i 1
-        while (%i <= $ini(teach.ini,캐릭터,0)) {
-          var %s.char %s.char $+ $chr(44) $ini(teach.ini,캐릭터,%i)
-          inc %i
-        }      
-        privmsg $gettok(%Zodbot.data,3,32) 조교할 캐릭터를 선택하여 주시기 바랍니다. Usage : @조교 캐릭터 캐릭터명  (ex : @조교 캐릭터 $uiif(치르노,소악마,레이무) $+ )
-        privmsg $gettok(%Zodbot.data,3,32) 현재 조교 가능한 캐릭터 : $mid(%s.char,3)
-        halt      
-      }            
-      if (!$readini(%character,$2 $+ 1,1)) {
-        privmsg $gettok(%Zodbot.data,3,32) 현재 캐릭터는 $2 $+ (으)로 조교할 수 없습니다. 다른 행동으로 조교해주세요.
-        halt      
-      }
-      var %r.health $readini(tstatus.ini,$address(%nick,2),캐릭터)) $+ $chr(95) $+ 체력
-      if ($readini(tstatus.ini,$address(%nick,2),%r.health) < 20) {
-        privmsg $gettok(%Zodbot.data,3,32) $readini(tstatus.ini,$address(%nick,2),캐릭터)) $+ 의 체력이 너무 낮습니다. 잠시 후 다시 조교하시기 바랍니다.
-        halt      
-      }
-      var %t.char $readini(tstatus.ini,$address(%nick,2),캐릭터) $+ $chr(95) $+ $2
-      if (!$readini(tstatus.ini,$address(%nick,2),%t.char)) {
-        writeini -n tstatus.ini $address(%nick,2) %t.char 1
-      }
-      if (!$readini(tstatus.ini,$address(%nick,2),%r.health)) {
-        writeini -n tstatus.ini $address(%nick,2) %r.health $readini(teach.ini,체력,$readini(tstatus.ini,$address(%nick,2),캐릭터))
-      }              
-      if ($readini(tstatus.ini,$address(%nick,2),%t.char) <= $readini(teach.ini,exp,1)) {
-        var %teach $2 $+ 1
-        privmsg $gettok(%Zodbot.data,3,32) $readini(%character,%teach,$rand(1,$ini(%character,%teach,0)))
-      }
-      else if ($readini(tstatus.ini,$address(%nick,2),%t.char) <= $readini(teach.ini,exp,2)) {
-        var %teach $2 $+ 2
-        if ($readini(teach.ini,maxlv,$2) == 2) {
-          privmsg $gettok(%Zodbot.data,3,32) [조교완료] $readini(%character,%teach,$rand(1,$ini(%character,%teach,0)))        
-        }
-        else { privmsg $gettok(%Zodbot.data,3,32) $readini(%character,%teach,$rand(1,$ini(%character,%teach,0))) }
-      }
-      else if ($readini(tstatus.ini,$address(%nick,2),%t.char) <= $readini(teach.ini,exp,3)) {
-        var %teach $2 $+ 3
-        if (!$readini(%character,%teach,1)) { var %teach $2 $+ 2 }
-        privmsg $gettok(%Zodbot.data,3,32) [조교완료] $readini(%character,%teach,$rand(1,$ini(%character,%teach,0)))
-      }
-      else if ($readini(tstatus.ini,$address(%nick,2),%t.char) > $readini(teach.ini,exp,3)) {
-        var %teach $2 $+ 3
-        ; echo -a $readini(%character,%teach,1)
-        if (!$readini(%character,%teach,1)) { var %teach $2 $+ 2 }
-        privmsg $gettok(%Zodbot.data,3,32) [조교완료] $readini(%character,%teach,$rand(1,$ini(%character,%teach,0)))
-      }
-      else {
-        var %teach $2 $+ 2
-        if (!$readini(%character,%teach,1)) { var %teach $2 $+ 2 }
-        if ($readini(%character,%teach,$rand(1,$ini(%character,%teach,0)))) {
-          privmsg $gettok(%Zodbot.data,3,32) $readini(%character,%teach,$rand(1,$ini(%character,%teach,0)))        
-        }
-        var %teach $2 $+ 3
-        else if ($readini(%character,%teach,$rand(1,$ini(%character,%teach,0)))) {
-          privmsg $gettok(%Zodbot.data,3,32) [조교완료] $readini(%character,%teach,$rand(1,$ini(%character,%teach,0)))        
-        }
-      }
-      var %t.exp $rand(1,200)
-      var %t.health $rand(30,150)
-      var %t.heal $readini(tstatus.ini,$address(%nick,2),캐릭터) $+ $chr(95) $+ 체력
-      var %h.gauge $calc($readini(tstatus.ini,$address(%nick,2),%t.heal) - %t.health)
-      if (%h.gauge <= 0) { var %h.gauge 1 }
-      privmsg $gettok(%Zodbot.data,3,32)  $+ $2 $+ 의 숙련도 : $readini(tstatus.ini,$address(%nick,2),%t.char) → $calc($readini(tstatus.ini,$address(%nick,2),%t.char) + %t.exp) / $readini(tstatus.ini,$address(%nick,2),캐릭터) $+ 의 체력 : $percent2(%h.gauge,$readini(teach.ini,체력,$readini(tstatus.ini,$address(%nick,2),캐릭터)),40)
-      writeini -n tstatus.ini $address(%nick,2) %t.char $calc($readini(tstatus.ini,$address(%nick,2),%t.char) + %t.exp)
-      writeini -n tstatus.ini $address(%nick,2) %t.heal %h.gauge
-      halt
-    }
     if ($1 == $readini(prefix.ini,%chan,p1) $+ 트위터 || $1 == $readini(prefix.ini,%chan,p2) $+ 트위터 || $1 == $readini(prefix.ini,%chan,p3) $+ 트위터) {
       if (!$2) { privmsg $gettok(%Zodbot.data,3,32) Usage : $readini(cmdlimit.ini,트위터,설명) | set %usagelimit 1 | halt }
       unset %tweet.*      
@@ -4953,28 +4824,6 @@ on *:input:*: {
     ; msg ^^ 킥 $chan %fuckup.nick %fuckup.count2 $+ 회째_스핀
     halt
   }
-  if ($1 == @전체설호) {
-    if ($nick($chan,0) > 60) { sockwrite -tn Zodbot PRIVMSG $chan :인간이 너무 많다. 처리하기가 귀찮으니 니가 직접 타이핑해라. | halt }
-    var %i 0
-    while (%i <= $nick($chan,0)) {
-      inc %i
-      var %allcall %allcall $+ $chr(44) $nick($chan,%i)
-    }
-    sockwrite -tn Zodbot PRIVMSG $chan : $+ $mid($remove(%allcall,^^,%botnick,$me,$chr(44) $chr(44) $chr(44),$chr(44) $chr(44)),2) $+ 횽,눈하들 좀 설레이나혀? ㅍ;;
-  }
-  if ($1 == @전태양) {
-    if ($nick($chan,0) > 60) { sockwrite -tn Zodbot PRIVMSG $chan :인간이 너무 많다. 처리하기가 귀찮으니 니가 직접 타이핑해라. | halt }
-    var %i 0
-    while (%i <= $nick($chan,0)) {
-      inc %i
-      if (%i <= 30) { var %allcall %allcall $+ $chr(44) $nick($chan,%i) }
-      else { var %allcall2 %allcall2 $+ $chr(44) $nick($chan,%i) | var %call2 1 }
-    }
-    sockwrite -tn Zodbot PRIVMSG $chan : 8 $+ $mid($remove(%allcall,^^,%botnick,$me,$chr(44) $chr(44) $chr(44),$chr(44) $chr(44)),2) $+ 횽,눈하들 좀 설레이나혀? ㅍ;;
-    if (%call2 == 1) {
-      sockwrite -tn Zodbot PRIVMSG $chan : 8 $+ $mid($remove(%allcall2,^^,%botnick,$me,$chr(44) $chr(44) $chr(44),$chr(44) $chr(44)),2) $+ 횽,눈하들 좀 설레이나혀? ㅍ;;
-    }
-  }
   ; 자동조인 리스트
   if ($1 == @리스트) || ($1 == @list) {
     autojoinlist $chan
@@ -5163,16 +5012,6 @@ on *:input:*: {
   if ($1 == @닥쳐) || ($1 == @shut) {
     say $1-
     접속체크    .timer1 off | sockwrite -tn Zodbot PRIVMSG $chan : $+ 수다기능을 끕니다.
-    halt
-  }
-  if ($1 == @조교추가) {
-    say $1-
-    if (!$2) {
-      sockwrite -tn Zodbot PRIVMSG $chan : $+ ip를 지정하여 주십시요.
-      halt
-    }
-    writeini tstatus.ini *!*@ $+ $2 멍때리다 1
-    sockwrite -tn Zodbot PRIVMSG $chan : $+ 해당 ip에 권한의 추가가 완료되었습니다.
     halt
   }
   if ($1 == @인증추가) {
