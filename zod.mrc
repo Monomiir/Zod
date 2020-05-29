@@ -1301,18 +1301,6 @@ on *:sockread:Zodbot: {
       privmsg $gettok(%Zodbot.data,3,32) %chan $+ 채널의 토픽은 " $+ $chan(%chan).topic $+ " 입니다
       halt
     }
-    if ($1 == $readini(prefix.ini,%chan,p1) $+ 좆같음지수 || $1 == $readini(prefix.ini,%chan,p2) $+ 좆같음지수 || $1 == $readini(prefix.ini,%chan,p3) $+ 좆같음지수) {
-      좆같음지수
-      if ($2) {
-        privmsg $gettok(%Zodbot.data,3,32) $nickdt($2) $+ 의 좆같음지수 : %좆같음 ( $+ %좆같음per $+ $chr(37) $+ , %좆느낌 $+ )
-        halt
-      }
-      privmsg $gettok(%Zodbot.data,3,32) $nickdt(%nick) $+ 의 좆같음지수 : %좆같음 ( $+ %좆같음per $+ $chr(37) $+ , %좆느낌 $+ )
-      unset %좆같음
-      unset %좆같음per
-      unset %좆느낌
-      halt
-    }
     if ($1 == $readini(prefix.ini,%chan,p1) $+ 샘플계산 || $1 == $readini(prefix.ini,%chan,p2) $+ 샘플계산 || $1 == $readini(prefix.ini,%chan,p3) $+ 샘플계산) {
       if (!$2) { privmsg $gettok(%Zodbot.data,3,32) Usage : $readini(cmdlimit.ini,샘플계산,설명) | set %usagelimit 1 | halt }
       if (!$3) { privmsg $gettok(%Zodbot.data,3,32) Usage : $readini(cmdlimit.ini,샘플계산,설명) | set %usagelimit 1 | halt }
@@ -6679,33 +6667,6 @@ alias timeoutoff {
 alias timeout {
   timertimeout 1 $$1 privmsg $$2 연결제한시간 초과입니다. 잠시후 다시 시도해주세요. (Request Time-out)
   timertimeout2 1 $$1 sockclose $$3
-}
-alias 좆같음지수 {
-  var %per $rand(1,100)
-  if (%좆같음지정 == 1) { var %per 100 | set %좆같음지정 2 }
-  var %i 0
-  if ($len(%per) == 1) { var %per 0 $+ %per }
-  while (%i < 10) {
-    if (%per == 100) { var %botchart ■■■■■■■■■■ | var %i 11 }
-    if (%per != 100) {
-      if ($mid(%per,1,1) > %i) { var %botchart %botchart $+ ■ }
-      else { var %botchart %botchart $+ □ }
-    }
-    inc %i
-  }
-  if (%per isnum 1-10) { set %좆느낌 쾌적함 }
-  if (%per isnum 10-20) { set %좆느낌 그닥 좆같지 않음 }
-  if (%per isnum 20-30) { set %좆느낌 약간 좆같음 }
-  if (%per isnum 30-40) { set %좆느낌 좆같은듯, 안좆같은듯 함 }
-  if (%per isnum 40-50) { set %좆느낌 슬슬 좆같기 시작함 }
-  if (%per isnum 50-60) { set %좆느낌 좆같음 }
-  if (%per isnum 60-70) { set %좆느낌 아~ 슈ㅣ발! 좆같음!!~! }
-  if (%per isnum 70-80) { set %좆느낌 슈ㅣ발 절라 좆같음! }
-  if (%per isnum 80-90) { set %좆느낌 이런 개씨발 좆같은 경우를 봤나!!! }
-  if (%per isnum 90-99) { set %좆느낌 4야이 개씨발 샛퀴들아!!1 }
-  if (%per == 100) { set %좆느낌 4야이 개씨발 $read(slangcombo.txt) $+ !!! 아~ 슈ㅣ발! 절라 좆같네!!~!1 }
-  set %좆같음 %botchart
-  set %좆같음per %per
 }
 alias unicode_utf8 returnex $regsubex(uniutf, $iif($isutf($1), $1, $utfencode($1)), /U\+([0-9A-F]{1,6})/g, $bin_utf8($base(\t, 16, 2, 21)))
 alias -l Socket_Close { 
