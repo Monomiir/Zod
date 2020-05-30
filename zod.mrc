@@ -346,8 +346,8 @@ on *:sockread:Zodbot: {
       if ((!$2) || (!$3)) { privmsg $gettok(%Zodbot.data,3,32) Usage : $readini(cmdlimit.ini,비만계산,설명) | set %usagelimit 1 | halt }
       if (($2 !isnum) || ($3 !isnum)) { privmsg $gettok(%Zodbot.data,3,32) Usage : $readini(cmdlimit.ini,비만계산,설명) | set %usagelimit 1 | halt }
       var %fatcalc $calc($3 / ($2 / 100) / ($2 / 100))
-      if ($2 > 300) { privmsg $gettok(%Zodbot.data,3,32) 미친 빌어먹을 자이언트새퀴.. 꺼져 임마! | halt }
-      if ($3 > 300) { privmsg $gettok(%Zodbot.data,3,32) 돼지새퀴... 뭘쳐먹으면 몸무게가 그따위냐? | halt }
+      if ($2 > 300) { privmsg $gettok(%Zodbot.data,3,32) 자이언트냐.. 꺼져 임마! | halt }
+      if ($3 > 300) { privmsg $gettok(%Zodbot.data,3,32) 돼지네... 뭘먹으면 몸무게가 그따위냐? | halt }
       if (%fatcalc < 10) { var %fstatus 4심각한 저체중 }
       if (%fatcalc < 0) { var %fstatus 4숫자 이상하게 입력하면 뒤진다? }
       if (%fatcalc isnum 10-18.5) { var %fstatus 10저체중 }
@@ -357,7 +357,7 @@ on *:sockread:Zodbot: {
       if (%fatcalc isnum 30-35) { var %fstatus 13중도비만 }
       if (%fatcalc isnum 35-40) { var %fstatus 7고도비만 }
       if (%fatcalc isnum 40-100) { var %fstatus 4위험수위!! }
-      if (%fatcalc > 100) { var %fstatus 4꼭 숫자를 요따위로 입력하는 싸이코 새퀴들이 있지.. ㅉㅉ }
+      if (%fatcalc > 100) { var %fstatus 4꼭 숫자를 요따위로 입력하는 싸이코들이 있지.. ㅉㅉ }
       if (%fatcalc isnum 20-25) { var %mstatus 12(1급 현역)1 }
       if (%fatcalc isnum 25-30 || %fatcalc isnum 18.5-20) { var %mstatus 12(2급 현역)1 }
       if (%fatcalc isnum 30-35 || %fatcalc isnum 17-18.5) { var %mstatus 12(3급 현역)1 }
@@ -680,12 +680,6 @@ on *:sockread:Zodbot: {
       }
       while (100 < %resultnick1) { var %resultnick1 $calc(%resultnick1 - 100) }
       while (100 < %resultnick2) { var %resultnick2 $calc(%resultnick2 - 100) }
-      if ($2 == 하코) { var %resultnick1 90 }            
-      if ($3 == 하코) { var %resultnick2 90 }
-      if ($2 == 김영아) { var %resultnick1 90 }            
-      if ($3 == 김영아) { var %resultnick2 90 }
-      if ($2 == 영아) { var %resultnick1 90 }            
-      if ($3 == 영아) { var %resultnick2 90 }
       var %result $calc((%resultnick1 / 2 * 0.99) + (%resultnick2 / 2 * 0.99))
       var %mind1 $calc(%resultnick1 * 0.99)
       var %mind2 $calc(%resultnick2 * 0.99)
@@ -5471,7 +5465,6 @@ alias wowcommand {
   if (%wow.prof == 羲羲) { set %wow.prof 11없음 }
   if (%wow.itmc >= 15) { set %wow.itms (아이템은 최대 15개까지만 표시됨) }
   if (%wow.ta1 == $dll(utf8.dll,convertutf8,없음) && %wow.ta2 == $dll(utf8.dll,convertutf8,없음)) { set %wow.talent 해당없음 }
-  ; if (%wow.id == 하코다테) { set %wow.desc [얼어붙은 왕좌 (25인)] - 얼음왕관 성채에서 리치 왕 처치 (25인)] }
   privmsg %wow.chan 아이디 :12 %wow.prefix 1 $+ %wow.id / 캐릭터 : %wow.char  / 길드명 : %wow.gn  / 업적 : $comgen(%wow.achp) $+ 점 / 총 완료 : $percent2($gettok(%wow.ach,1,47),$gettok(%wow.ach,2,47),25)
   privmsg %wow.chan 생명력 : $remove(%wow.hp,생명력:) / $gettok(%wow.mp,1,58) : $gettok(%wow.mp,2,58) / 특성 전문화 : %wow.talent / 전문기술 : $mid(%wow.prof,3)
   privmsg %wow.chan 최근업적 : $deltok(%wow.desc,3,93) %wow.time
