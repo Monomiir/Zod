@@ -53,11 +53,6 @@ on 1:connect:{
     remini tmp_exp.ini 쿠폰번호
     ; timerozinger 1 300 server -m irc.ozinger.org
   }
-  if ($network == Ozinger) {
-    set %oautojoin #Ozinger,#Zod,
-    myautojoin
-    timerautocon 0 120 autocon
-  }
   antiidle
 }
 ; 스크립트가 언로드 됬을시 변수 삭제
